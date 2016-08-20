@@ -1,5 +1,5 @@
 #ifndef __MATRIZ__
-#define __MATRIZ__ 
+#define __MATRIZ__
 
 #include <bits/stdc++.h>
 
@@ -45,12 +45,9 @@ class Matriz{
 		return m[i][j].value();
 	}
 public:
+	bool valid;
 	Matriz() {
-		for(int i=0;i<3;i++) {
-			for(int j=0;j<3;j++) {
-				m[i][j] = 0;
-			}
-		}
+		valid = false;
 	}
 	Matriz(vector<int> vec) {
 		assert(vec.size() == 9);
@@ -59,6 +56,7 @@ public:
 				m[i][j] = vec[3*i+j];
 			}
 		}
+		valid = true;
 	}
 	Matriz(const Matriz &o) {
 		for(int i=0;i<3;i++) {
@@ -66,6 +64,7 @@ public:
 				m[i][j] = o.m[i][j];
 			}
 		}
+		valid = true;
 	}
 	Matriz operator*(Matriz o) {
 		Matriz r;
@@ -87,6 +86,7 @@ public:
 				m[i][j] = o.m[i][j];
 			}
 		}
+		valid = true;
 	}
 	bool operator==(Matriz o) {
 		for(int i=0;i<3;i++) {
