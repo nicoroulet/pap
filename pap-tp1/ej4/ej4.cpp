@@ -31,11 +31,17 @@ int main(){
   int n, l;
   Matriz m;
   cin >> n >> l;
+  cin >> m;
+  // cout << m;
   int logl = (int) log2(l) + 1;
   vector<vector<Matriz> > pi = vector<vector<Matriz> >(logl); // pi es la parte inferior de una piramide
   // las Matrices por default tienen valid = false
   for(int i = 0; i < pi.size(); ++i) {
     pi[i] = vector<Matriz>(n - (1 << i) + 1); // la base de la piramide es pi[0]
+  }
+
+  for(int i = 0; i < n; ++i) {
+    cin >> pi[0][i];
   }
 
   vector<int> lDescompuesto = descomponer(l);   // los productos a buscar
