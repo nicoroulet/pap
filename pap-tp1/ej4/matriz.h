@@ -29,7 +29,7 @@ class Matriz{
 			return Zp(_n*t._n);
 		}
 		Zp operator=(Zp t) {
-			_n = t._n;
+			return _n = t._n;
 		}
 		bool operator!=(Zp t) {
 			return _n != t._n;
@@ -93,6 +93,7 @@ public:
 			}
 		}
 		valid = true;
+                return (*this);
 	}
 	bool operator==(Matriz o) {
 		for(int i=0;i<3;i++) {
