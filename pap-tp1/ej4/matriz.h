@@ -47,6 +47,11 @@ class Matriz{
 public:
 	bool valid;
 	Matriz() {
+		for(int i=0;i<3;i++) {
+			for(int j=0;j<3;j++) {
+				m[i][j] = 0;
+			}
+		}
 		valid = false;
 	}
 	Matriz(vector<int> vec) {
@@ -75,6 +80,7 @@ public:
 				}
 			}
 		}
+		valid = true;
 		return r;
 	}
 	void operator*=(Matriz o) {

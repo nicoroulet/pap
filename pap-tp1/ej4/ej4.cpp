@@ -32,7 +32,6 @@ int main(){
   Matriz m;
   cin >> n >> l;
   cin >> m;
-  // cout << m;
   int logl = (int) log2(l) + 1;
   vector<vector<Matriz> > pi = vector<vector<Matriz> >(logl); // pi es la parte inferior de una piramide
   // las Matrices por default tienen valid = false
