@@ -69,7 +69,7 @@ public:
 				m[i][j] = o.m[i][j];
 			}
 		}
-		valid = true;
+		valid = o.valid;
 	}
 	Matriz operator*(Matriz o) {
 		Matriz r;
@@ -102,6 +102,9 @@ public:
 					return false;
 				}
 			}
+		}
+		if (valid != o.valid){
+			return false;
 		}
 		return true;
 	}
