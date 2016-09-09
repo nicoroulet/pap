@@ -33,6 +33,8 @@ int maximizar_diversion_total(int n, vector<int>& div_tot, int mask) {
         res = max(res, maximizar_diversion_total(n, div_tot, mask ^ i) + div_una[i]);
     }
 
+    div_tot[mask] = res;
+
     return res;
 }
 
