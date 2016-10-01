@@ -19,7 +19,7 @@ struct motor {
     motor(int n, int m, const vector<vector<ver> >& ady)
         : n(n), m(m), ady(ady), es_puente(n, vector<bool>(n, false)), vecinitos(n, nullptr)
     {
-        {
+        { // puentes
             vector<int> depth(n, -1);
             vector<int> low(n);
 
@@ -44,7 +44,7 @@ struct motor {
             dfs_puentes(0, 0, 0);
         }
 
-        {
+        { // vecinitos (precálculo query C)
             vecindades.reserve(n);
             vector<bool> visitado(n, false);
 
