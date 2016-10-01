@@ -13,33 +13,59 @@ struct motor {
     const vector<vector<ver> >& ady;
 
     vector<vector<bool> > es_puente;
-    vector<int> vecinitos;
+    vector<int*> vecinitos;
+    vector<int> vecindades;
 
     motor(int n, int m, const vector<vector<ver> >& ady)
-        : n(n), m(m), ady(ady), es_puente(n, vector<bool>(n, false)) {
+        : n(n), m(m), ady(ady), es_puente(n, vector<bool>(n, false)), vecinitos(n, nullptr)
+    {
+        {
+            vector<int> depth(n, -1);
+            vector<int> low(n);
 
-        vector<int> depth(n, -1);
-        vector<int> low(n);
+            function<void(ver, ver, int)> dfs_puentes = [&] (ver v, ver p, int d) {
+                depth[v] = d;
+                low[v] = d;
 
-        function<void(ver, ver, int)> dfs_puentes = [&] (ver v, ver p, int d) {
-            depth[v] = d;
-            low[v] = d;
-
-            for (ver w : ady[v]) if (w != p) {
-                if (depth[w] == -1) {
-                    dfs_puentes(w, v, d+1);
-                    low[v] = min(low[v], low[w]);
-                    if (low[w] >= depth[w]) {
-                        es_puente[v][w] = true;
-                        es_puente[w][v] = true;
+                for (ver w : ady[v]) if (w != p) {
+                    if (depth[w] == -1) {
+                        dfs_puentes(w, v, d+1);
+                        low[v] = min(low[v], low[w]);
+                        if (low[w] >= depth[w]) {
+                            es_puente[v][w] = true;
+                            es_puente[w][v] = true;
+                        }
+                    } else if (depth[w] < depth[v]) {
+                        low[v] = min(low[v], depth[w]);
                     }
-                } else if (depth[w] < depth[v]) {
-                    low[v] = min(low[v], depth[w]);
                 }
-            }
-        };
+            };
 
-        dfs_puentes(0, 0, 0);
+            dfs_puentes(0, 0, 0);
+        }
+
+        {
+            vecindades.reserve(n);
+            vector<bool> visitado(n, false);
+
+            function<void(ver)> dfs_vecinitos = [&] (ver v) {
+                visitado[v] = true;
+
+                if (vecinitos[v] == nullptr) {
+                    vecindades.push_back(0);
+                    vecinitos[v] = &vecindades.back();
+                }
+
+                *vecinitos[v] += 1;
+
+                for (ver w : ady[v]) if (!visitado[w]) {
+                    if (!es_puente[v][w]) vecinitos[w] = vecinitos[v];
+                    dfs_vecinitos(w);
+                }
+            };
+
+            dfs_vecinitos(0);
+        }
     }
 
     int resolver_a(const ver v1, const ver v2) {
@@ -70,7 +96,7 @@ struct motor {
     }
 
     int resolver_c(ver v) {
-        throw;
+        return *vecinitos[v] - 1;
     }
 };
 
