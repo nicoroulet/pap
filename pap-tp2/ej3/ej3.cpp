@@ -1,118 +1,72 @@
 #include <iostream>
 #include <vector>
-#include <stack>
-#include <deque>
-#include <utility>
+#include <array>
 #include <functional>
 
 using namespace std;
 
 typedef int ver;
-typedef pair<ver, ver> eje;
+typedef array<ver, 2> eje;
 
-struct block_cut_tree {
-    struct comp {
-        int cant_ver = 1;
-        int cant_eje;
-        int cant_ver_ady;
-        vector<comp*> ady;
-    };
+struct motor {
+    int n, m;
+    const vector<vector<ver> >& ady;
 
-    vector<comp*> comp_ver; // vertice v -> nodo correspondiente a v en bct
-    vector<comp*> comp_calle;
-    deque<comp> comps;
+    vector<vector<bool> > es_puente;
+    vector<int> vecinitos;
 
-    block_cut_tree(int n, int m, const vector<vector<ver> >& ady_g, const vector<vector<int> >& calle)
-        : comp_ver(n), comp_calle(m) {
+    motor(int n, int m, const vector<vector<ver> >& ady)
+        : n(n), m(m), ady(ady), es_puente(n, vector<bool>(n, false)) {
 
-        stack<eje> pila;
         vector<int> depth(n, -1);
         vector<int> low(n);
 
-        function<int(ver, ver, int)> dfs = [&] (ver v, ver p, int d) -> int {
-            depth.at(v) = d;
-            low.at(v) = d;
+        function<void(ver, ver, int)> dfs_puentes = [&] (ver v, ver p, int d) {
+            depth[v] = d;
+            low[v] = d;
 
-            for (ver w : ady_g.at(v)) if (w != p) {
-                if (depth.at(w) == -1) {
-                    pila.push({v, w});
-
-                    low.at(v) = min(low.at(v), dfs(w, v, d+1));
-
-                    if (low.at(w) >= depth.at(v)) {
-                        // v pto articulacion
-                        if (comp_ver.at(v) == nullptr) {
-                            comps.emplace_back();
-                            comp_ver.at(v) = &comps.back();
-
-                        }
-
-                        comp* pto_art = comp_ver.at(v);
-
-                        // reportar componente
-                        comps.emplace_back();
-                        comp* nueva_comp = &comps.back();
-
-                        while (true) {
-                            eje e = pila.top();
-                            pila.pop();
-                            comp_calle.at(calle.at(e.first).at(e.second)) = nueva_comp;
-
-                            for (comp** c : {&comp_ver.at(e.first), &comp_ver.at(e.second)}) {
-                                if (*c == nullptr) {
-                                    *c = nueva_comp;
-                                    ++nueva_comp->cant_ver;
-                                }
-                            }
-
-                            ++nueva_comp->cant_eje;
-
-                            if (e == make_pair(v, w)) break;
-                        }
-
-                        nueva_comp->ady.push_back(pto_art);
-                        pto_art->ady.push_back(nueva_comp);
+            for (ver w : ady[v]) if (w != p) {
+                if (depth[w] == -1) {
+                    dfs_puentes(w, v, d+1);
+                    low[v] = min(low[v], low[w]);
+                    if (low[w] >= depth[w]) {
+                        es_puente[v][w] = true;
+                        es_puente[w][v] = true;
                     }
-                } else if (depth.at(w) < depth.at(v)) {
-                    pila.push({v, w});
-                    low.at(v) = min(low.at(v), depth.at(w));
+                } else if (depth[w] < depth[v]) {
+                    low[v] = min(low[v], depth[w]);
                 }
             }
-
-            return low.at(v);
         };
 
-        dfs(0, 0, 0);
-
-        for (comp* cp : comp_ver) {
-            cerr << cp << " ";
-        } cerr << "\n";
-
-        for (comp& c : comps) {
-            cerr << &c << " " << c.cant_ver << " " << c.cant_eje << "\n";
-        }
+        dfs_puentes(0, 0, 0);
     }
 
-    int resolver_a(ver v1, ver v2) {
+    int resolver_a(const ver v1, const ver v2) {
         int res = 0;
+        vector<bool> visitado(n, false);
 
-        function<int(comp*, comp*)> dfs = [&] (comp* c, comp* p) -> int {
-            for (comp* w : c->ady) if (w != p) {
-                if (w == comp_ver.at(v2) || dfs(w, c)) {
-                    res += (comp_ver.at(v2)->cant_eje == 1);
+        // contar puentes en un camino cualquiera entre v1 y v2
+
+        function<bool(ver)> dfs_camino = [&] (ver w1) -> bool {
+            visitado[w1] = true;
+            for (ver w2 : ady[w1]) if (!visitado[w2]) {
+                if (w2 == v2 || dfs_camino(w2)) {
+                    res += es_puente[w1][w2];
                     return true;
                 }
             }
             return false;
         };
 
-        dfs(comp_ver.at(v1), 0);
+        dfs_camino(v1);
 
         return res;
     }
 
-    int resolver_b(int e) {
-        return comp_calle.at(e)->cant_eje == 1;
+    int resolver_b(const eje e) {
+        // ver si eje es puente
+        return es_puente[e[0]][e[1]];
     }
 
     int resolver_c(ver v) {
@@ -124,42 +78,45 @@ int main() {
     int n, m;
     cin >> n >> m;
 
-    vector<vector<int> > calle(n, vector<int>(n));
+    vector<eje> calles(m);
     vector<vector<ver> > ady(n);
     for (int i = 0; i < m; ++i) {
         int j1, j2;
         cin >> j1 >> j2;
-        ady.at(j1-1).push_back(j2-1);
-        ady.at(j2-1).push_back(j1-1);
-        calle.at(j1-1).at(j2-1) = i;
-        calle.at(j2-1).at(j1-1) = i;
+        j1 -= 1; j2 -= 1;
+        ady[j1].push_back(j2);
+        ady[j2].push_back(j1);
+        calles[i] = {j1, j2};
     }
 
-    block_cut_tree bct(n, m, ady, calle);
+    motor bct(n, m, ady);
 
     int q;
     cin >> q;
 
     for (int i = 0; i < q; ++i) {
-        char tipo;
-        cin >> tipo;
+        char tipo_query;
+        cin >> tipo_query;
 
-        if (tipo == 'A') {
+        if (tipo_query == 'A') {
             int j1, j2;
             cin >> j1 >> j2;
-            cout << bct.resolver_a(j1-1, j2-1);
+            j1 -= 1; j2 -= 1;
+            cout << bct.resolver_a(j1, j2) << endl;
         }
 
-        if (tipo == 'B') {
+        if (tipo_query == 'B') {
             int c;
             cin >> c;
-            cout << bct.resolver_b(c-1);
+            c -= 1;
+            cout << bct.resolver_b(calles[c]) << endl;
         }
 
-        if (tipo == 'C') {
+        if (tipo_query == 'C') {
             int j;
             cin >> j;
-            cout << bct.resolver_c(j-1);
+            j -= 1;
+            cout << bct.resolver_c(j) << endl;
         }
     }
 }
