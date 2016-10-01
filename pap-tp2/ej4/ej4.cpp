@@ -12,6 +12,19 @@ using namespace std;
 // la idea es usar Kosaraju para identificar las componentes fuertemente conexas, enumerarlas,
 // y tener en un vector "componentes" de n posiciones, donde la posición componentes[i] indique el número de componente del nodo i
 
+void dfsArmadorDeStack(int noditoActual, vector<bool> &visitado, vector<vector<int> > &ady, stack<int> &stackFinalizados){
+    // recorro los alcanzables desde noditoActual
+    visitado[noditoActual] = true;
+    for (int j = 0; j < ady[noditoActual].size(); ++j) {
+        int vecino = ady[noditoActual][j];
+        if (!visitado[vecino]) {
+            dfsArmadorDeStack(vecino, visitado, ady, stackFinalizados);
+        }
+    }
+    // cuanto termine el dfs desde este nodo, este nodo finalizo y ahora lo pusheo al stack
+    stackFinalizados.push(noditoActual);
+}
+
 int main() {
     int n, m;
     cin >> n;
@@ -42,32 +55,15 @@ int main() {
         adyT[nodo2].push_back(nodo1);
     }
 
-    // TODO: verificar que el grafo no sea vacio
+    // TODO: verificar que el grafo no sea vacio?
 
     // hago dfs(G)
-    stack<int> s = stack<int>();
-
     for (int i = 0; i < n; ++i) {
         if (!visitado[i]){
-
-            // recorro los alcanzables desde i
-            s.push(i);
-            while(!s.empty()){
-                int nodito = s.top();
-                s.pop();
-                visitado[nodito] = true;
-                for (int j = 0; j < ady[nodito].size(); ++j) {
-                    int vecino = ady[nodito][j];
-                    if (!visitado[vecino]) {
-                        s.push(vecino);
-                    }
-                }
-                // este nodo finalizo, asi que lo pusheo al stack de finalizados
-                stackFinalizados.push(nodito);
-            }
-            // cuanto termina el while recorri una componente
+            dfsArmadorDeStack(i, visitado, ady, stackFinalizados);
         }
     }
+    
 
 
     // hago dfs(Gt), en el orden inverso que los stackee en stackFinalizados
@@ -76,12 +72,12 @@ int main() {
     int componenteActual = 0;
     while(!stackFinalizados.empty()) {
         int i = stackFinalizados.top();
-        
+
         stackFinalizados.pop();
         if (!visitado[i]){
 
             // recorro los alcanzables desde i
-            s = stack<int>();
+            stack<int> s = stack<int>();
             s.push(i);
             while(!s.empty()) {
                 int nodito = s.top();
@@ -104,9 +100,10 @@ int main() {
     // inputeo las queries
     int q;
     cin >> q;
+    /* este cout extremadamente util para debugguear, no lo borro
     for (int i = 0; i < n; ++i){
         cout << "nodo " << i+1 << " - componente " << componentes[i] << endl;
-    }
+    }*/
 
     for (int i = 0; i < q; ++i) {
         int nodo1, nodo2;
