@@ -56,8 +56,8 @@ int main() {
                 int nodito = s.top();
                 s.pop();
                 visitado[nodito] = true;
-                for (int i = 0; i < ady[nodito].size(); ++i) {
-                    int vecino = ady[nodito][i];
+                for (int j = 0; j < ady[nodito].size(); ++j) {
+                    int vecino = ady[nodito][j];
                     if (!visitado[vecino]) {
                         s.push(vecino);
                     }
@@ -76,6 +76,7 @@ int main() {
     int componenteActual = 0;
     while(!stackFinalizados.empty()) {
         int i = stackFinalizados.top();
+        
         stackFinalizados.pop();
         if (!visitado[i]){
 
@@ -87,8 +88,8 @@ int main() {
                 componentes[nodito] = componenteActual;
                 s.pop();
                 visitado[nodito] = true;
-                for (int i = 0; i < adyT[nodito].size(); ++i) {
-                    int vecino = adyT[nodito][i];
+                for (int j = 0; j < adyT[nodito].size(); ++j) {
+                    int vecino = adyT[nodito][j];
                     if (!visitado[vecino]) {
                         s.push(vecino);
                     }
