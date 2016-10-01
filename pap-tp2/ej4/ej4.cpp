@@ -72,17 +72,17 @@ int main() {
 
     // hago dfs(Gt), en el orden inverso que los stackee en stackFinalizados
     visitado = vector<bool>(n, false);
-    s = stack<int>();
 
     int componenteActual = 0;
-    while(!stackFinalizados.empty()){
+    while(!stackFinalizados.empty()) {
         int i = stackFinalizados.top();
         stackFinalizados.pop();
         if (!visitado[i]){
 
             // recorro los alcanzables desde i
+            s = stack<int>();
             s.push(i);
-            while(!s.empty()){
+            while(!s.empty()) {
                 int nodito = s.top();
                 componentes[nodito] = componenteActual;
                 s.pop();
@@ -104,7 +104,7 @@ int main() {
     int q;
     cin >> q;
     for (int i = 0; i < n; ++i){
-        cout << "nodo " << i << " - componente " << componentes[i] << endl;
+        cout << "nodo " << i+1 << " - componente " << componentes[i] << endl;
     }
 
     for (int i = 0; i < q; ++i) {
