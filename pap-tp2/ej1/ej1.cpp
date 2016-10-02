@@ -44,7 +44,7 @@ int bfs(int s, int t, vector<list<int> > & grafo) {
   return 1;
 }
 
-int fordFulkerson(int s, int t, vector<list<int> > & grafo) { // ejes con peso 1
+int edmondsKarp(int s, int t, vector<list<int> > & grafo) { // ejes con peso 1
   // vector<vector<int> > capacidades(n, vector<int>(n, 1)); //matriz de unos con las capacidades de cada eje (el flujo es 1-capacidad)
   int flujo = 0;
   int m = bfs(s, t, grafo); // tomo el camino de aumento mas corto, actualizando capacidades (pongo en 0 los caminos usados)
@@ -80,6 +80,6 @@ int main() {
     grafo[out(v1)].push_back(in(v2));
     grafo[out(v2)].push_back(in(v1));
   }
-  int res = fordFulkerson(0, 1, grafo);
+  int res = edmondsKarp(0, 1, grafo);
   cout << res << endl;
 }
