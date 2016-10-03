@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <queue>
 #include <cassert>
 
 #define DBG(x) cerr << #x << " = " << (x) << endl
@@ -12,6 +13,52 @@
 
 using namespace std;
 
+int bfs(int s, int t, vector<list<int> > & grafo) {
+	// el grafo va a ser la red residual
+	vector<int> padre(grafo.size(), -1); // guarda el padre de cada nodo en el bfs. No visitado = -1, padre de s = -2
+	vector<list<int>::iterator> itEnPadre(grafo.size()); // el iterador al eje del grafo que va del padre al nodo
+	padre[s] = -2;
+	queue<int> q;
+	q.push(s);
+	bool hayCamino = false;
+	while(!q.empty()) {
+		int nodoActual = q.front();
+		q.pop();
+		for (auto vecino = grafo[nodoActual].begin(); vecino != grafo[nodoActual].end(); ++vecino) {
+			if (padre[*vecino] == -1) {
+				padre[*vecino] = nodoActual;
+				itEnPadre[*vecino] = vecino;
+				q.push(*vecino);
+			}
+			if (*vecino == t) {
+				q = queue<int>();
+				hayCamino = true;
+				break;
+			}
+		}
+	}
+	if (!hayCamino)
+		return 0;
+	// como todos los pesos son 1, al usar un eje, lo invierto en la red residual
+	for (int n = t; n != s; n = padre[n]) {
+		grafo[n].push_back(padre[n]);
+		grafo[padre[n]].erase(itEnPadre[n]);
+	}
+	return 1;
+}
+
+int edmondsKarp(int s, int t, vector<list<int> > & grafo) { // ejes con peso 1
+	// vector<vector<int> > capacidades(n, vector<int>(n, 1)); //matriz de unos con las capacidades de cada eje (el flujo es 1-capacidad)
+	int flujo = 0;
+	int m = bfs(s, t, grafo); // tomo el camino de aumento mas corto, actualizando capacidades (pongo en 0 los caminos usados)
+	while (m != 0) {
+		++flujo;
+		m = bfs(s, t, grafo);
+	}
+	return flujo;
+}
+
+
 bool menor(vector<int> &v1, vector<int> &v2){
 	// llamame con dos vectores del mismo tamaño man
 	assert(v1.size() == v2.size());
@@ -20,8 +67,8 @@ bool menor(vector<int> &v1, vector<int> &v2){
 		if (v1[i] >= v2[i]) {
 			return false;
 		}
-	return true;
 	}
+	return true;
 }
 
 int comp(vector<int> &v1, vector<int> &v2){
@@ -45,7 +92,7 @@ int main(){
 		}
 	}
 
-	// Armo el grafo. {out(i) -> in(j)} sii {acción i < acción j}.
+	// Armo el grafo. {in(i) -> out(j)} sii {acción i < acción j}.
 	// Reviso todos los pares de acciones A^2, y los comparo en O(D). --> A^2 \times D
 
 	vector<list<int> > grafo(2 * a + 2); // la posicion 2*i es in(i), 2*i+1 es out(i). 0 es source, 1 es sink
@@ -53,8 +100,15 @@ int main(){
 		grafo[source].push_back(in(i));
 		grafo[out(i)].push_back(sink);
 		for (int j = 0; j < a; ++j) {
-			if menor(acciones[i], acciones[j]){
-				grafo[out(i)].push_back(in(j));
+			if (menor(acciones[i], acciones[j])){
+				cout << "la acción " << i << " es menor que la acción " << j << endl;
+				for (int k = 0; k < acciones[i].size(); ++k) {
+					DBG(acciones[i][k]);
+				}
+				for (int k = 0; k < acciones[j].size(); ++k) {
+					DBG(acciones[j][k]);
+				}
+				grafo[in(i)].push_back(out(j));
 			}
 		}
 	}
@@ -62,7 +116,9 @@ int main(){
 	// por König, hay que encontrar el tamaño m de un matching máximo en el grafo armado. Luego, A-m será el número buscado
 	// Flujo!
 
-	m = matching(grafo);
+	int m = edmondsKarp(source, sink, grafo);
+	DBG(a);
+	DBG(m);
 	cout << a-m << endl;
 
 	return 0;
