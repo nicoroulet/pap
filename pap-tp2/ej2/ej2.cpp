@@ -1,8 +1,14 @@
 #include <iostream>
 #include <vector>
+#include <list>
 #include <cassert>
 
 #define DBG(x) cerr << #x << " = " << (x) << endl
+#define source (0)
+#define sink (1)
+#define in(i) (2*(i))
+#define out(i) (2*(i)+1)
+
 
 using namespace std;
 
@@ -39,6 +45,25 @@ int main(){
 		}
 	}
 
+	// Armo el grafo. {out(i) -> in(j)} sii {acción i < acción j}.
+	// Reviso todos los pares de acciones A^2, y los comparo en O(D). --> A^2 \times D
+
+	vector<list<int> > grafo(2 * a + 2); // la posicion 2*i es in(i), 2*i+1 es out(i). 0 es source, 1 es sink
+	for (int i = 0; i < a; ++i) {
+		grafo[source].push_back(in(i));
+		grafo[out(i)].push_back(sink);
+		for (int j = 0; j < a; ++j) {
+			if menor(acciones[i], acciones[j]){
+				grafo[out(i)].push_back(in(j));
+			}
+		}
+	}
+
+	// por König, hay que encontrar el tamaño m de un matching máximo en el grafo armado. Luego, A-m será el número buscado
+	// Flujo!
+
+	m = matching(grafo);
+	cout << a-m << endl;
 
 	return 0;
 }
