@@ -70,14 +70,14 @@ bool menor(vector<int> &v1, vector<int> &v2){
 	}
 	return true;
 }
-
+/*
 int comp(vector<int> &v1, vector<int> &v2){
 	// 0 si es menor, 1 si es mayor, -1 si no son comparables (se cruzan)
 	if (menor(v1,v2)) return 0;
 	if (menor(v2,v1)) return 1;
 	return -1;
 }
-
+*/
 
 int main(){
 	int a, d;
