@@ -24,19 +24,19 @@ struct motor {
             vector<int> low(n);
 
             function<void(ver, ver, int)> dfs_puentes = [&] (ver v, ver p, int d) {
-                depth[v] = d;
-                low[v] = d;
+                depth.at(v) = d;
+                low.at(v) = d;
 
-                for (ver w : ady[v]) if (w != p) {
-                    if (depth[w] == -1) {
+                for (ver w : ady.at(v)) if (w != p) {
+                    if (depth.at(w) == -1) {
                         dfs_puentes(w, v, d+1);
-                        low[v] = min(low[v], low[w]);
-                        if (low[w] >= depth[w]) {
-                            es_puente[v][w] = true;
-                            es_puente[w][v] = true;
+                        low.at(v) = min(low.at(v), low.at(w));
+                        if (low.at(w) >= depth.at(w)) {
+                            es_puente.at(v).at(w) = true;
+                            es_puente.at(w).at(v) = true;
                         }
-                    } else if (depth[w] < depth[v]) {
-                        low[v] = min(low[v], depth[w]);
+                    } else if (depth.at(w) < depth.at(v)) {
+                        low.at(v) = min(low.at(v), depth.at(w));
                     }
                 }
             };
@@ -49,17 +49,17 @@ struct motor {
             vector<bool> visitado(n, false);
 
             function<void(ver)> dfs_vecinitos = [&] (ver v) {
-                visitado[v] = true;
+                visitado.at(v) = true;
 
-                if (vecinitos[v] == nullptr) {
+                if (vecinitos.at(v) == nullptr) {
                     vecindades.push_back(0);
-                    vecinitos[v] = &vecindades.back();
+                    vecinitos.at(v) = &vecindades.back();
                 }
 
-                *vecinitos[v] += 1;
+                *vecinitos.at(v) += 1;
 
-                for (ver w : ady[v]) if (!visitado[w]) {
-                    if (!es_puente[v][w]) vecinitos[w] = vecinitos[v];
+                for (ver w : ady.at(v)) if (!visitado.at(w)) {
+                    if (!es_puente.at(v).at(w)) vecinitos.at(w) = vecinitos.at(v);
                     dfs_vecinitos(w);
                 }
             };
@@ -75,10 +75,10 @@ struct motor {
         // contar puentes en un camino cualquiera entre v1 y v2
 
         function<bool(ver)> dfs_camino = [&] (ver w1) -> bool {
-            visitado[w1] = true;
-            for (ver w2 : ady[w1]) if (!visitado[w2]) {
+            visitado.at(w1) = true;
+            for (ver w2 : ady.at(w1)) if (!visitado.at(w2)) {
                 if (w2 == v2 || dfs_camino(w2)) {
-                    res += es_puente[w1][w2];
+                    res += es_puente.at(w1).at(w2);
                     return true;
                 }
             }
@@ -92,11 +92,11 @@ struct motor {
 
     int resolver_b(const eje e) {
         // ver si eje es puente
-        return es_puente[e[0]][e[1]];
+        return es_puente.at(e.at(0)).at(e.at(1));
     }
 
     int resolver_c(ver v) {
-        return *vecinitos[v] - 1;
+        return *vecinitos.at(v) - 1;
     }
 };
 
@@ -110,9 +110,9 @@ int main() {
         int j1, j2;
         cin >> j1 >> j2;
         j1 -= 1; j2 -= 1;
-        ady[j1].push_back(j2);
-        ady[j2].push_back(j1);
-        calles[i] = {j1, j2};
+        ady.at(j1).push_back(j2);
+        ady.at(j2).push_back(j1);
+        calles.at(i) = {j1, j2};
     }
 
     motor bct(n, m, ady);
@@ -135,7 +135,7 @@ int main() {
             int c;
             cin >> c;
             c -= 1;
-            cout << bct.resolver_b(calles[c]) << endl;
+            cout << bct.resolver_b(calles.at(c)) << endl;
         }
 
         if (tipo_query == 'C') {
