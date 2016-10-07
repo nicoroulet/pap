@@ -101,13 +101,6 @@ int main(){
 		grafo[out(i)].push_back(sink);
 		for (int j = 0; j < a; ++j) {
 			if (menor(acciones[i], acciones[j])){
-				cout << "la acción " << i << " es menor que la acción " << j << endl;
-				for (int k = 0; k < acciones[i].size(); ++k) {
-					DBG(acciones[i][k]);
-				}
-				for (int k = 0; k < acciones[j].size(); ++k) {
-					DBG(acciones[j][k]);
-				}
 				grafo[in(i)].push_back(out(j));
 			}
 		}
@@ -117,8 +110,6 @@ int main(){
 	// Flujo!
 
 	int m = edmondsKarp(source, sink, grafo);
-	DBG(a);
-	DBG(m);
 	cout << a-m << endl;
 
 	return 0;
