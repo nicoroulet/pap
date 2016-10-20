@@ -28,8 +28,10 @@ int maximizar_diversion_total(int n, vector<int>& div_tot, int mask) {
     }
 
     int res = 0;
+    int tope = mask >> 1;
 
-    for (int i = mask; i != 0; i = mask & (i-1)) {
+    for (int i = mask; i > tope; i = mask & (i-1)) { // usar i > tope asegura iterar solo sobre los subconjuntos que contienen a la primer amiga.
+        // luego, cada combinación es iterada una sola vez. 
         res = max(res, maximizar_diversion_total(n, div_tot, mask ^ i) + div_una[i]);
     }
 
