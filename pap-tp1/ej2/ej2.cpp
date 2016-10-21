@@ -3,39 +3,38 @@
 
 using namespace std;
 
-vector<int> div_una;
+vector<int> diversion_fiesta;
 
-vector<int> div_fiesta(int n, vector<vector<int> > d) {
-    vector<int> div_una(1<<n);
+void calcular_diversion_fiestas(int n, vector<vector<int> > d) {
+    diversion_fiesta = vector<int>(1<<n);
 
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < i; ++j) {
             int ij = (1 << i) | (1 << j);
-            div_una[ij] = d[i][j];
+            diversion_fiesta[ij] = d[i][j];
             int mask = ((1 << n) - 1) ^ ij;
             for (int k = mask; k != 0; k = mask & (k-1)) {
-                div_una[k | ij] += d[i][j];
+                diversion_fiesta[k | ij] += d[i][j];
             }
         }
     }
-
-    return div_una;
 }
 
-int maximizar_diversion_total(int n, vector<int>& div_tot, int mask) {
-    if (div_tot[mask] != - 1) {
-        return div_tot[mask];
+int maximizar_diversion_total(int n, vector<int>& diversion_subcjto, int mask) {
+    if (diversion_subcjto[mask] != - 1) {
+        return diversion_subcjto[mask];
     }
 
     int res = 0;
-    int tope = mask >> 1;
+    int k = 31 - __builtin_clz(mask);
+    int tope = 1 << k;
 
-    for (int i = mask; i > tope; i = mask & (i-1)) { // usar i > tope asegura iterar solo sobre los subconjuntos que contienen a la primer amiga.
+    for (int i = mask; i >= tope; i = mask & (i-1)) { // usar i > tope asegura iterar solo sobre los subconjuntos que contienen a la primer amiga.
         // luego, cada combinación es iterada una sola vez. 
-        res = max(res, maximizar_diversion_total(n, div_tot, mask ^ i) + div_una[i]);
+        res = max(res, maximizar_diversion_total(n, diversion_subcjto, mask ^ i) + diversion_fiesta[i]);
     }
 
-    div_tot[mask] = res;
+    diversion_subcjto[mask] = res;
 
     return res;
 }
@@ -52,12 +51,12 @@ int main() {
         }
     }
 
-    div_una = div_fiesta(n, d);
+    calcular_diversion_fiestas(n, d);
 
-    vector<int> div_tot(1<<n, -1);
-    div_tot[0] = 0;
+    vector<int> diversion_subcjto(1<<n, -1);
+    diversion_subcjto[0] = 0;
 
-    int res = maximizar_diversion_total(n, div_tot, (1<<n) - 1);
+    int res = maximizar_diversion_total(n, diversion_subcjto, (1<<n) - 1);
 
     cout << res << endl;
 
