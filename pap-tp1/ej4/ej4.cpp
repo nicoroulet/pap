@@ -19,11 +19,11 @@ vector<int> descomponer(int n){
   return res;
 }
 
-Matriz gimme(int i, int j, vector<vector<Matriz> > & pi){
-  if (pi[i][j].valid) {
-    return pi[i][j];
+Matriz obtener_o_calcular_P(int i, int j, vector<vector<Matriz> > & P){
+  if (P[i][j].valid) {
+    return P[i][j];
   } else {
-    return pi[i][j] = gimme(i-1, j, pi) * gimme(i-1, j + (1<<(i-1)), pi);
+    return P[i][j] = obtener_o_calcular_P(i-1, j, P) * obtener_o_calcular_P(i-1, j + (1<<(i-1)), P);
   }
 }
 
@@ -33,14 +33,14 @@ int main(){
   cin >> n >> l;
   cin >> m;
   int logl = (int) log2(l) + 1;
-  vector<vector<Matriz> > pi = vector<vector<Matriz> >(logl); // pi es la parte inferior de una piramide
+  vector<vector<Matriz> > P = vector<vector<Matriz> >(logl); // P es la parte inferior de una piramide
   // las Matrices por default tienen valid = false
-  for(int i = 0; i < pi.size(); ++i) {
-    pi[i] = vector<Matriz>(n - (1 << i) + 1); // la base de la piramide es pi[0]
+  for(int i = 0; i < P.size(); ++i) {
+    P[i] = vector<Matriz>(n - (1 << i) + 1); // la base de la piramide es P[0]
   }
 
   for(int i = 0; i < n; ++i) {
-    cin >> pi[0][i];
+    cin >> P[0][i];
   }
 
   vector<int> lDescompuesto = descomponer(l);   // los productos a buscar
@@ -49,8 +49,8 @@ int main(){
     int partialsum = 0;
     Matriz acum = id();
     for(int j = 0; j < lDescompuesto.size(); ++j){
-      acum *= gimme(lDescompuesto[j], i + partialsum, pi);
-      // pi[j][partialsum+i] = ;
+      acum *= obtener_o_calcular_P(lDescompuesto[j], i + partialsum, P);
+      // P[j][partialsum+i] = ;
       partialsum += (1 << lDescompuesto[j]);
     }
     if (acum == m){
