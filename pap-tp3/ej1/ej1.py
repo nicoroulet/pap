@@ -11,5 +11,5 @@ def calcularBordes(s):
 
 nombre = raw_input()
 apodo = raw_input()
-bordeMax = max(calcularBordes(apodo + nombre))
-print 'S' if (bordeMax >= len(apodo)) else 'N'
+esSubstring = len(apodo) in calcularBordes(apodo + '#' + nombre)
+print 'S' if esSubstring else 'N'
