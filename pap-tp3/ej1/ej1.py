@@ -9,7 +9,7 @@ def calcularBordes(s):
 		bordes[i] = j + 1
 	return bordes
 
-nombre = raw_input()
-apodo = raw_input()
+nombre = input()
+apodo = input()
 esSubstring = len(apodo) in calcularBordes(apodo + '#' + nombre)
-print 'S' if esSubstring else 'N'
+print('S' if esSubstring else 'N')

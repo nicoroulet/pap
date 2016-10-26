@@ -5,11 +5,11 @@ class Trie:
     self.isMemoryTop = False
 
 root = Trie()
-n = int(raw_input())
+n = int(input())
 res = 0
 root.nWords = n
 for _ in range(n):
-  linea = raw_input().strip().split()
+  linea = input().strip().split()
   mail = linea[0]
   p = int(linea[1])
   current = root
@@ -23,4 +23,4 @@ for _ in range(n):
     if current.isMemoryTop:
       res = max(res, current.nWords)
 
-print res
+print(res)
