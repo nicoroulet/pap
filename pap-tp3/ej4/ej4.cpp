@@ -10,6 +10,7 @@ pair<int,int> id(){
 }
 
 pair<int,int> mejores(pair<int,int> p1, pair<int,int>p2) {
+	// pre: los dos pares están ordenados
 	pair<int,int> res = id();
 	if (p1.first >= p2.first) {
 		res.first = p1.first;
@@ -22,8 +23,7 @@ pair<int,int> mejores(pair<int,int> p1, pair<int,int>p2) {
 }
 
 pair<int,int> query(vector<pair<int,int> > &e, int left, int right, int i, int j, int k){
-	// quiero resolver la query [left, right). Le estoy preguntando al elemento del vector que guarda [i,j).
-	// k es el índice en el vector que tiene al [i,j)
+	// quiero resolver la query [left, right). Le estoy preguntando al elemento k del vector, que guarda mejores2[i,j).
 	if (left <= i && j <= right) {
 		// i,j contiene al que estoy pidiendo
 		return e[k];
@@ -42,7 +42,7 @@ int main() {
 	cin >> d >> r;
 	int k = 31 - __builtin_clz(d);
 	int dd = (1 << (k+1));
-	vector<pair<int,int> > e(2*dd, id()); // armamos un heap de tamaño suficiente.
+	vector<pair<int,int> > e(2*dd, id()); // armamos un heap/segmentTree de tamaño suficiente.
 	// dd es donde arranca la última fila del heap. en dd+i el iésimo elemento del arreglo  (0 < i < d-1)
 
 	// inicializamos el heap. el fin tiene todos ceros.
@@ -57,17 +57,10 @@ int main() {
 	}
 
 	// leemos pedidos:
-	vector<pair<int,int> > pedidos(r);
 	int p,u;
-	for (int i = 0; i < r; ++i) {
-		cin >> p >> u;
-		pedidos[i] = make_pair(p,u);
-	}
-
 	pair<int,int> res = id();
 	for (int i = 0; i < r; ++i) {
-		p = pedidos[i].first;
-		u = pedidos[i].second;
+		cin >> p >> u;
 		res = query(e, p, u, 0, dd, 1);
 		cout << res.first + res.second << endl;
 	}
