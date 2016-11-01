@@ -1,26 +1,26 @@
 class Trie:
   def __init__(self):
-    self.childs = {}
-    self.nWords = 0
-    self.isMemoryTop = False
+    self.hijos = {}
+    self.nPalabras = 0
+    self.esPR = False
 
 root = Trie()
 n = int(input())
 res = 0
-root.nWords = n
+root.nPalabras = n
 for _ in range(n):
   linea = input().strip().split()
   mail = linea[0]
   p = int(linea[1])
-  current = root
+  actual = root
   for c in mail:
-    if not c in current.childs:
-      current.childs[c] = Trie()
-    current = current.childs[c]
-    current.nWords += 1
+    if not c in actual.hijos:
+      actual.hijos[c] = Trie()
+    actual = actual.hijos[c]
+    actual.nPalabras += 1
     p -= 1
-    current.isMemoryTop |= (p == 0)
-    if current.isMemoryTop:
-      res = max(res, current.nWords)
+    actual.esPR |= (p == 0)
+    if actual.esPR:
+      res = max(res, actual.nPalabras)
 
 print(res)
