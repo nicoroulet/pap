@@ -1,4 +1,5 @@
 from math import sqrt
+from Llist import *
 
 n = int(input())
 
@@ -30,18 +31,18 @@ def angulo(v, w):
     sin = (vx * wy - vy * wx) / (norm(v) * norm(w))
     return cos * sign(sin) + sign(sin)
 
-poli = [(p[0], p[1] + 1), p, p]
+poly = Llist([(p[0], p[1] + 1), p, p])
 
-#print(poli[1:-1])
+it = poly.first
 for i in range(n):
-    v = poli[i]
-    w = poli[i + 1]
-
+    v = it.data
+    w = it.next.data
     a = sorted(ady[w], key=lambda u: (angulo((v[0] - w[0], v[1] - w[1]), (u[0] - w[0], u[1] - w[1])), u[0], u[1]))
-#    print("ady", w, ady[w])
+    auxIt = it
     for j, u in enumerate(u for u in a if u != v):
-        if poli[i + j + 2] == u: break
-        poli.insert(i + j + 2, u)
-#    print(poli[1:-1])
+        if auxIt.next.next.data == u: break
+        auxIt.next.insert(u)
+        auxIt = auxIt.next
+    it = it.next
 
-print(poli[1:-1])
+poly.first.next.print(n)
