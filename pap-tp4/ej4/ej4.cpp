@@ -58,7 +58,7 @@ int main() {
 			}
 		}
 	}
-	int res = 1;
+	long long res = 1;
 	int s = ciclesizes.size();
 	for (int i = 0; i < s; ++i) {
 		if (ciclesizes[i]>1) {
