@@ -62,7 +62,7 @@ int main() {
 	int s = ciclesizes.size();
 	for (int i = 0; i < s; ++i) {
 		if (ciclesizes[i]>1) {
-			res *= 2;
+			res *= pow(2,(ciclesizes[i]/2));
 			res = res % 1000000007;
 		}
 		for (int j = i+1; j < s; ++j) {
