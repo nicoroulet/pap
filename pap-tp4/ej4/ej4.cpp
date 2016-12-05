@@ -32,16 +32,12 @@ int main() {
 	int tamanioCiclo, actual;
 	vector<bool> visitados(n, false);
 	for (int i = 0; i < n; ++i) {
-		//cout << "recorro el " << i << endl;
 		if(!visitados[i]){
 			// empiezo a ciclar
 			tamanioCiclo = 1;
 			visitados[i] = true;
 			actual = v[i];
-			//cout << "Armando ciclo... " << endl;
-			//cout << i << " -> " << actual << endl;
 			while(actual != i){
-				//cout << actual << " -> " << v[actual] << endl;
 				// ciclamos
 				tamanioCiclo++;
 				visitados[actual] = true;
@@ -50,7 +46,6 @@ int main() {
 
 			// si el ciclo es par, devolvemos cero
 			if (tamanioCiclo % 2 == 0){
-				//cout << "hay un ciclo par" << endl;
 				cout << 0 << endl;
 				return 0;
 			}else{
@@ -68,7 +63,6 @@ int main() {
 		for (int j = i+1; j < s; ++j) {
 			res = (res << gcd(ciclesizes[i], ciclesizes[j])) % 1000000007;
 
-			//cout << "i " << i << " j " << j << " gcd " << gcd(ciclesizes[i], ciclesizes[j]) << endl;
 		}
 	}
 	cout << res << endl;
